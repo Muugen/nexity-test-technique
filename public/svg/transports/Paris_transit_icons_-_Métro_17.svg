@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="250px" height="250px" viewBox="0 0 283.46 283.46">
+	<title>Paris transit icons - Métro Ligne 17</title>
+	<circle fill="#D5C900" cx="141.73" cy="141.73" r="141.73"/>
+	<path fill="#25303B" d="M75.52 216.67v-118c-9.14 7.23-23.6 14.25-33.6 18.71l-10.2-23c15.73-6.59 34.66-16.59 49.55-27.86h26.15v150.15zM181.19 216.67h-34.25c0-19.77 5.32-32.54 18.5-57L202 91.63h-72.92V66.54h105V91c-32.9 57.2-52.89 102.07-52.89 125.67z"/>
+</svg>
