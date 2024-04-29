@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Copy from "/public/svg/Copy.svg";
 
 export interface RealEstate {
   City: string;
@@ -7,11 +6,11 @@ export interface RealEstate {
   Latitude: string;
   Longitude: string;
   Name: string;
-  NbRoomsMax: string;
-  NbRoomsMin: string;
+  NbRoomsMax: number;
+  NbRoomsMin: number;
   Picture: string;
   PostalCode: string;
-  Price: string;
+  Price: number;
 }
 
 interface RealEstateItemProps {
@@ -19,8 +18,23 @@ interface RealEstateItemProps {
 }
 
 const RealEstateItem: React.FC<RealEstateItemProps> = ({ realEstate }) => {
-  const { Id, Name, Picture, City, PostalCode, Price, Latitude, Longitude } =
-    realEstate;
+  const {
+    Name,
+    Picture,
+    City,
+    PostalCode,
+    Price,
+    Latitude,
+    Longitude,
+    NbRoomsMin,
+    NbRoomsMax,
+  } = realEstate;
+
+  const [imageError, setImageError] = useState(false);
+  const [transportIcon, setTransportIcon] = useState<string>("");
+  const [transportData, setTransportData] = useState<{ ligne: string } | null>(
+    null
+  );
 
   const getTransportData = async (latitude: string, longitude: string) => {
     const url = `https://preprod.kitlenid.fr/api/transport?lat=${latitude}&lon=${longitude}`;
@@ -28,14 +42,42 @@ const RealEstateItem: React.FC<RealEstateItemProps> = ({ realEstate }) => {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      return data;
+      // Extract the ligne value from the data
+      const ligne = data[0]?.ligne;
+      // Return an object that only includes the ligne value
+      return { ligne };
     } catch (error) {
       console.error(error);
       return null;
     }
   };
 
-  const [transportData, setTransportData] = useState<any>(null);
+  const determineTransportIcon = (ligne: string | undefined) => {
+    let icon = "svg/transports/Paris_transit_icons_-_Train.svg";
+    if (ligne && ligne.startsWith("M")) {
+      icon = `/public/svg/transports/Paris_transit_icons_-_Métro_${ligne.replace(
+        "M",
+        ""
+      )}.svg`;
+    } else if (ligne && ligne.startsWith("RER")) {
+      icon = `svg/transports/Paris_transit_icons_-_RER_${ligne.replace(
+        "RER ",
+        ""
+      )}.svg`;
+    } else if (ligne && ligne.startsWith("Transilien")) {
+      icon = `svg/transports/Paris_transit_icons_-_Train_${ligne.replace(
+        "Transilien ",
+        ""
+      )}.svg`;
+    } else if (ligne && ligne.startsWith("T")) {
+      icon = `svg/transports/Paris_transit_icons_-_Tram_${ligne.replace(
+        "T ",
+        ""
+      )}.svg`;
+    }
+
+    return icon;
+  };
 
   useEffect(() => {
     const fetchTransportData = async () => {
@@ -46,7 +88,17 @@ const RealEstateItem: React.FC<RealEstateItemProps> = ({ realEstate }) => {
     fetchTransportData();
   }, [Latitude, Longitude]);
 
-  const [imageError, setImageError] = useState(false);
+  useEffect(() => {
+    if (transportData) {
+      const icon = determineTransportIcon(transportData.ligne);
+      setTransportIcon(icon);
+    }
+  }, [transportData]);
+
+  const determineLoans = (Price: number) => {
+    let loans = Price / 250;
+    return loans;
+  };
 
   return (
     <div className="flex justify-start items-start gap-4 w-full py-4 px-3 relative cursor-pointer overflow-hidden bg-off-white border-2 border-stroke rounded-xl">
@@ -66,22 +118,39 @@ const RealEstateItem: React.FC<RealEstateItemProps> = ({ realEstate }) => {
         <h3 className="text-blue-light text-foreground mb-1">
           {PostalCode} {City}
         </h3>
-        {transportData && transportData.nearest_station && (
-          <p className="text-gray-700">
-            {transportData.nearest_station.name} -{" "}
-            {transportData.nearest_station.distance}m
-          </p>
-        )}
+        <div className="flex overflow-auto no-scrollbar gap-4 my-2">
+          {transportData && (
+            <div className="flex flex-col items-center flex-shrink-0">
+              <img
+                alt="Transport Icon"
+                className="size-6"
+                src={transportIcon}
+              />
+            </div>
+          )}
+        </div>
         <p className="text-primary-title text-xs font-normal">
-          <img src={Copy} alt="Copy" className="w-4 h-4 inline-block" />
-          <span className="text-blue-dark ml-2">kekw</span>
+          <img src="svg/Copy.svg" alt="Copy" className="w-4 h-4 inline-block" />
+          <span className="text-blue-dark ml-2">{`de ${NbRoomsMin} à ${NbRoomsMax} pièces`}</span>
         </p>
-        <p className="font-semibold">
-          <img src={Copy} alt="Copy" className="w-4 h-4 inline-block" />
-          <span className="text-blue-light text-foreground ml-2 mr-1">
-            à partir de
+        <p className="text-primary-title text-xs font-normal">
+          <img src="svg/Crop.svg" alt="Crop" className="w-4 h-4 inline-block" />
+          <span className="text-blue-light text-foreground ml-2 mr-2">
+            à partir de{" "}
+            <span className="text-blue-dark">
+              <b>{`${Price} €`}</b>
+            </span>
           </span>
-          <span className="text-blue-dark whitespace-nowrap">{Price} €</span>
+        </p>
+        <p className="text-primary-title text-xs font-normal">
+          <img
+            src="svg/Money.svg"
+            alt="Money"
+            className="w-4 h-4 inline-block"
+          />
+          <span className="text-blue text-foreground ml-2 mr-2">
+            soit <b>{determineLoans(Price)} €/mois</b>
+          </span>
         </p>
       </div>
     </div>

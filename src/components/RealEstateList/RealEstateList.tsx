@@ -13,7 +13,6 @@ const RealEstateList = () => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await parseCSV();
-      console.log(data);
       setRealEstates(data);
     };
 
