@@ -47,6 +47,9 @@ const RealEstateItem: React.FC<RealEstateItemProps> = ({ realEstate }) => {
     try {
       const response = await fetch(url);
       const data = await response.json();
+
+      console.log("this is train data", data);
+
       // Extract the ligne value from the data
       const ligne = data[0]?.ligne;
       // Return an object that only includes the ligne value
@@ -59,7 +62,9 @@ const RealEstateItem: React.FC<RealEstateItemProps> = ({ realEstate }) => {
 
   const determineTransportIcon = (ligne: string | undefined) => {
     let icon = "";
-    if (ligne && ligne.startsWith("M")) {
+    if (ligne === "T3" || ligne === "Tram-Train Ouest Lyonnais") {
+      icon = `svg/transports/Paris_transit_icons_-_Tram.svg`;
+    } else if (ligne && ligne.startsWith("M")) {
       icon = `svg/transports/Paris_transit_icons_-_Métro_${ligne.replace(
         "M",
         ""
