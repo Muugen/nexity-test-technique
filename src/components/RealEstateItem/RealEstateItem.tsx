@@ -35,6 +35,11 @@ const RealEstateItem: React.FC<RealEstateItemProps> = ({ realEstate }) => {
   const [transportData, setTransportData] = useState<{ ligne: string } | null>(
     null
   );
+  const [isFavorited, setIsFavorited] = useState(false);
+
+  const handleHeartClick = () => {
+    setIsFavorited(!isFavorited);
+  };
 
   const getTransportData = async (latitude: string, longitude: string) => {
     const url = `https://preprod.kitlenid.fr/api/transport?lat=${latitude}&lon=${longitude}`;
@@ -131,7 +136,11 @@ const RealEstateItem: React.FC<RealEstateItemProps> = ({ realEstate }) => {
         </div>
         <p className="text-primary-title text-xs font-normal">
           <img src="svg/Copy.svg" alt="Copy" className="w-4 h-4 inline-block" />
-          <span className="text-blue-dark ml-2">{`de ${NbRoomsMin} à ${NbRoomsMax} pièces`}</span>
+          <span className="text-blue-dark ml-2">
+            {NbRoomsMin === NbRoomsMax && NbRoomsMin === 1
+              ? "studio"
+              : `de ${NbRoomsMin} à ${NbRoomsMax} pièces`}
+          </span>
         </p>
         <p className="text-primary-title text-xs font-normal">
           <img src="svg/Crop.svg" alt="Crop" className="w-4 h-4 inline-block" />
@@ -152,6 +161,18 @@ const RealEstateItem: React.FC<RealEstateItemProps> = ({ realEstate }) => {
             soit <b>{determineLoans(Price)} €/mois</b>
           </span>
         </p>
+      </div>
+      <div className="absolute bottom-1.5 right-2">
+        <button
+          className="relative hover:opacity-80 transition z-10 cursor-pointer"
+          onClick={handleHeartClick}
+        >
+          <img
+            className="inline-block w-8 h-8"
+            src={isFavorited ? "svg/CoeurPlein.svg" : "svg/CoeurVide.svg"}
+            alt={isFavorited ? "CoeurPlein" : "CoeurVide"}
+          />
+        </button>
       </div>
     </div>
   );
