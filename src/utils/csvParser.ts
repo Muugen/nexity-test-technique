@@ -7,6 +7,7 @@ const parseCSV = async () => {
 
   try {
     const jsonArray = await csv().fromFile(filePaths);
+    console.log("this is csv array", jsonArray);
     return jsonArray;
   } catch (error) {
     console.error("Error parsing CSV file:", error);

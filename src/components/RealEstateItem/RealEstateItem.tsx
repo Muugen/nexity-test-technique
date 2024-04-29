@@ -58,9 +58,9 @@ const RealEstateItem: React.FC<RealEstateItemProps> = ({ realEstate }) => {
   };
 
   const determineTransportIcon = (ligne: string | undefined) => {
-    let icon = "svg/transports/Paris_transit_icons_-_Train.svg";
+    let icon = "";
     if (ligne && ligne.startsWith("M")) {
-      icon = `/public/svg/transports/Paris_transit_icons_-_Métro_${ligne.replace(
+      icon = `svg/transports/Paris_transit_icons_-_Métro_${ligne.replace(
         "M",
         ""
       )}.svg`;
@@ -79,6 +79,8 @@ const RealEstateItem: React.FC<RealEstateItemProps> = ({ realEstate }) => {
         "T ",
         ""
       )}.svg`;
+    } else {
+      icon = "svg/transports/Paris_transit_icons_-_Train.svg";
     }
 
     return icon;
